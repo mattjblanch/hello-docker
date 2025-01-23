@@ -1,0 +1,9 @@
+{
+    "name": "hello-docker",
+    "version": "1.0",
+    "main": "app.js",
+    "dependencies": {},
+    "scripts": {
+        "start": "node app.js"
+    }
+}

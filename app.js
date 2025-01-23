@@ -1,3 +1,9 @@
+if (process.env.NODE_ENV !== 'development') {
+    require('dotenv').config();
+    
+}
+
+
 const http = require('http');
 const port = 3000;
 

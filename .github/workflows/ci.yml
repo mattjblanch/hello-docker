@@ -10,25 +10,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      ACTIONS_STEP_DEBUG: true  # Enable debug logs
+      ACTIONS_STEP_DEBUG: true
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
     steps:
-      # Checkout the code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 14
 
-      # Install dependencies
       - name: Install Dependencies
         run: npm install
 
-      # Log in to DOCR
       - name: Log in to DOCR
         uses: docker/login-action@v2
         with:
@@ -36,7 +32,6 @@ jobs:
           username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      # Build and push Docker image to DOCR
       - name: Build and Push Docker Image to DOCR
         uses: docker/build-push-action@v4
         with:
@@ -44,22 +39,18 @@ jobs:
           push: true
           tags: registry.digitalocean.com/mattjblanch/hello-docker:latest
 
-      # Debug Docker image
       - name: Debug Docker Image
         run: |
           docker pull registry.digitalocean.com/mattjblanch/hello-docker:latest
           docker inspect registry.digitalocean.com/mattjblanch/hello-docker:latest
 
-      # Verify app_spec.yaml
       - name: Verify app_spec.yaml
         run: cat app_spec.yaml
 
-      # Install doctl using the official action
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      # Deploy to DigitalOcean App Platform
       - name: Deploy to DigitalOcean App Platform
         run: doctl apps update ${{ secrets.DIGITALOCEAN_APP_ID }} --spec app_spec.yaml

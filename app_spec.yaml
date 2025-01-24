@@ -1,5 +1,6 @@
 name: hello-docker
 services:
   - name: web
+    image: mattjblanch/hello-docker:latest
     internal_ports:
-      - port: 3000
+      - 3000

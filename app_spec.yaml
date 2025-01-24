@@ -5,6 +5,5 @@ services:
       registry: docker.io 
       repository: mattjblanch/hello-docker
       tag: latest
-    tag:latest
     internal_ports:
       - 3000

@@ -4,7 +4,7 @@ services:
     image:
       registry_type: DOCKER_HUB
       registry: docker.io
-      repository: mattjblanch/hello-docker
+      repository: docker.io/mattjblanch/hello-docker
       tag: latest
     internal_ports:
       - 3000

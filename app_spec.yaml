@@ -3,8 +3,8 @@ services:
   - name: web
     image:
       registry_type: DOCKER_HUB
-      registry: docker.io
-      repository: docker.io/mattjblanch/hello-docker
+      registry: registry.hub.docker.com
+      repository: mattjblanch/hello-docker
       tag: latest
     internal_ports:
       - 3000

@@ -2,35 +2,40 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
       ACTIONS_STEP_DEBUG: true  # Enable debug logs globally for all steps
-      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}  # Added at the job level
+      DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}  # DigitalOcean access token for authentication
 
     steps:
+      # Checkout the code from your repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # Setup Node.js environment
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 14
 
+      # Install project dependencies
       - name: Install Dependencies
         run: npm install
 
+      # Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # Build and push Docker image to Docker Hub
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
@@ -38,31 +43,39 @@ jobs:
           push: true
           tags: mattjblanch/hello-docker:latest
 
+      # Debug Docker image (optional)
       - name: Debug Docker Image
         run: |
           docker pull mattjblanch/hello-docker:latest
           docker inspect mattjblanch/hello-docker:latest
 
+      # Verify contents of app_spec.yaml
       - name: Verify app_spec.yaml
         run: cat app_spec.yaml
 
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Debug doctl Installation
+      # Install doctl manually to avoid permission issues
+      - name: Install doctl Manually
         run: |
+          # Create a bin directory in home if it doesn't exist
+          mkdir -p $HOME/bin
+          # Download the latest doctl release
+          curl -sL https://github.com/digitalocean/doctl/releases/latest/download/doctl-$(curl -s https://api.github.com/repos/digitalocean/doctl/releases/latest | grep -Po '"tag_name": "\K.*?(?=")').tar.gz | tar -xzv
+          # Move doctl to the bin directory
+          mv doctl $HOME/bin/
+          # Add the bin directory to PATH
+          echo "$HOME/bin" >> $GITHUB_PATH
+
+      # Verify doctl installation
+      - name: Verify doctl Installation
+        run: |
+          which doctl
+          ls -l $(which doctl)
           doctl version
-          doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Debug Secrets
-        run: 'echo "DIGITALOCEAN_APP_ID: ${{ secrets.DIGITALOCEAN_APP_ID }}"'
+      # Authenticate doctl with your DigitalOcean access token
+      - name: Authenticate doctl
+        run: doctl auth init --access-token $DIGITALOCEAN_ACCESS_TOKEN
 
+      # Deploy to DigitalOcean App Platform
       - name: Deploy to DigitalOcean App Platform
-        run: |
-          doctl version
-          doctl apps update ${{ secrets.DIGITALOCEAN_APP_ID }} --spec app_spec.yaml
-
-      - name: Check doctl Permissions
-        run: ls -l /usr/bin/doctl
+        run: doctl apps update ${{ secrets.DIGITALOCEAN_APP_ID }} --spec app_spec.yaml

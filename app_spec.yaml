@@ -3,7 +3,7 @@ services:
   - name: web
     image:
       registry_type: DOCR
-      repository: mattjblanch/hello-docker
+      repository: hello-docker
       tag: latest
     internal_ports:
       - 3000

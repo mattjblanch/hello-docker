@@ -63,3 +63,6 @@ jobs:
         run: |
           doctl version
           doctl apps update ${{ secrets.DIGITALOCEAN_APP_ID }} --spec app_spec.yaml
+
+      - name: Check doctl Permissions
+        run: ls -l /usr/bin/doctl

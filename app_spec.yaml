@@ -1,6 +1,10 @@
 name: hello-docker
 services:
   - name: web
-    image: mattjblanch/hello-docker:latest
+    image:
+      registry: docker.io 
+      repository: mattjblanch/hello-docker
+      tag: latest
+    tag:latest
     internal_ports:
       - 3000

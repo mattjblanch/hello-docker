@@ -2,6 +2,7 @@ name: hello-docker
 services:
   - name: web
     image:
+      registry_type: DOCKER_HUB
       registry: docker.io 
       repository: mattjblanch/hello-docker
       tag: latest

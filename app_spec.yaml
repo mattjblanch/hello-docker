@@ -4,7 +4,10 @@ services:
     image:
       registry_type: DOCKER_HUB
       registry: registry.hub.docker.com
-      repository: mattjblanch/hello-docker
+      repository: $DOCKERHUB_USERNAME/hello-docker
       tag: latest
+      credentials:
+        username: $DOCKERHUB_USERNAME
+        password: $DOCKERHUB_PASSWORD      
     internal_ports:
       - 3000

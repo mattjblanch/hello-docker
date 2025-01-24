@@ -58,11 +58,17 @@ jobs:
         run: |
           # Create a bin directory in home if it doesn't exist
           mkdir -p $HOME/bin
-          # Download the latest doctl release
-          curl -sL https://github.com/digitalocean/doctl/releases/latest/download/doctl-$(curl -s https://api.github.com/repos/digitalocean/doctl/releases/latest | grep -Po '"tag_name": "\K.*?(?=")').tar.gz | tar -xzv
+          # Get the latest version tag from GitHub API
+          VERSION=$(curl -s "https://api.github.com/repos/digitalocean/doctl/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
+          # Remove the 'v' from the version tag if present (e.g., 'v1.120.2' -> '1.120.2')
+          VERSION_NUMBER=${VERSION#v}
+          # Construct the download URL with platform and architecture
+          DOWNLOAD_URL="https://github.com/digitalocean/doctl/releases/download/${VERSION}/doctl-${VERSION_NUMBER}-linux-amd64.tar.gz"
+          # Download and extract doctl
+          curl -sL "${DOWNLOAD_URL}" | tar -xzv
           # Move doctl to the bin directory
           mv doctl $HOME/bin/
-          # Add the bin directory to PATH
+          # Add the bin directory to PATH for the current job
           echo "$HOME/bin" >> $GITHUB_PATH
 
       # Verify doctl installation

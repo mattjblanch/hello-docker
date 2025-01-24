@@ -57,7 +57,7 @@ jobs:
           doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Debug Secrets
-        run: echo "DIGITALOCEAN_APP_ID: ${{ secrets.DIGITALOCEAN_APP_ID }}"
+        run: 'echo "DIGITALOCEAN_APP_ID: ${{ secrets.DIGITALOCEAN_APP_ID }}"''
 
       - name: Deploy to DigitalOcean App Platform
         run: |

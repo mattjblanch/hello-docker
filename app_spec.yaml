@@ -1,0 +1,5 @@
+name: hello-docker
+services:
+  - name: web
+    internal_ports:
+      - port: 3000
